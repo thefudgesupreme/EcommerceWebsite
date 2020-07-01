@@ -46,21 +46,23 @@
 
                         <p class="lead font-weight-bold">Description</p>
 
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Et dolor suscipit libero eos atque
-                            quia ipsa
-                            sint voluptatibus!
-                            Beatae sit assumenda asperiores iure at maxime atque repellendus maiores quia sapiente.</p>
+                        <p>{{ object.description }}</p>
+{##}
+{#                        <form class="d-flex justify-content-left">#}
+{#                            <!-- Default input -->#}
+{#                            <input type="number" value="1" aria-label="Search" class="form-control"#}
+{#                                   style="width: 100px">#}
+{#                            <button class="btn btn-primary btn-md my-0 p" type="submit">Add to cart#}
+{#                                <i class="fas fa-shopping-cart ml-1"></i>#}
+{#                            </button>#}
+{#                        </form>#}
 
-                        <form class="d-flex justify-content-left">
-                            <!-- Default input -->
-                            <input type="number" value="1" aria-label="Search" class="form-control"
-                                   style="width: 100px">
-                            <button class="btn btn-primary btn-md my-0 p" type="submit">Add to cart
+                            <a href="{{ object.get_addToCart_url}}"   class= "btn btn-outline-primary btn-md my-0 p" >Add to cart
                                 <i class="fas fa-shopping-cart ml-1"></i>
-                            </button>
-
-                        </form>
-
+                            </a>
+                            <a href="{{ object.get_removeFromCart_url}}"   class= "btn btn-outline-danger btn-md my-0 p" >Remove from cart
+                                <i class="fas fa-shopping-cart ml-1"></i>
+                            </a>
                     </div>
                     <!--Content-->
 

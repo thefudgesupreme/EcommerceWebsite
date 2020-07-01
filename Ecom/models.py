@@ -26,17 +26,32 @@ class Item(models.Model):
     slug=models.SlugField()
     description=models.TextField()
 
+
     def __str__(self):
         return self.title
 
     def get_absolute_url(self):
         return reverse("Ecom:Product Details",kwargs={'slug':self.slug})
 
-class OrderItem(models.Model):
-    items=models.ForeignKey(Item,on_delete=models.CASCADE)
-    def __str__(self):
-        return self.title
+    def get_addToCart_url(self):
+        return reverse('Ecom:Add To Cart', kwargs={
+            'slug':self.slug
+        })
 
+    def get_removeFromCart_url(self):
+        return reverse('Ecom:Remove From Cart', kwargs={
+            'slug':self.slug
+        })
+
+class OrderItem(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE)
+    items=models.ForeignKey(Item,on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=1)
+    ordered = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.quantity} of Item : {self.items.title}"
 
 class Order(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
@@ -47,4 +62,4 @@ class Order(models.Model):
     ordered = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.title
+        return self.user.__str__()
