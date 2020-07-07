@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <main>
+        <div class="container mt-md-3 mb-md-3 ">
+
+            <div class="table-responsive text-nowrap">
+                <h2>Order Summary</h2>
+                <hr>
+                {% if object.items.all %}
+                    <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Items</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Total Item Price</th>
+                    </tr>
+                    </thead>
+                <tbody>
+                {% for order_item in object.items.all %}
+                    <tr>
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <td>{{ order_item.items.title }}</td>
+                        {% if order_item.items.discount_price %}
+                            <td>
+                                <del class="text-nowrap">{{ order_item.items.price }} ₹</del>
+                                {{ order_item.items.discount_price }} ₹
+                            </td>
+                        {% else %}
+                            <td>{{ order_item.items.price }} ₹</td>
+                        {% endif %}
+                        <td>
+                            <a href="{% url 'Ecom:Remove Single Item Cart' order_item.items.slug %}"><i class="fas fa-minus-circle mr-2"></i></a>
+                            {{ order_item.quantity }}
+                            <a href="{% url 'Ecom:Add To Cart' order_item.items.slug %}"><i class="fas fa-plus-circle ml-2"></i></a>
+                        </td>
+                        {% if order_item.items.discount_price %}
+                            <td class="font-weight-bold">{{ order_item.calculateDiscountPrice }} ₹
+                                <span class="badge badge-success font-weight-bold font-italic">Total {{ order_item.totalAmountSaved }} ₹ saved</span>
+                                <a href="{% url 'Ecom:Remove From Cart' order_item.items.slug %}"><i class="fas fa-trash-alt float-right mr-2"></i></a>
+                            </td>
+                        {% else %}
+                            <td class="font-weight-bold">{{ order_item.calculateTotalPrice }}
+                            <a href="{% url 'Ecom:Remove From Cart' order_item.items.slug %}"><i class="fas fa-trash float-right mr-2"></i></a>
+                            </td>
+                        {% endif %}
+                    </tr>
+                    {% empty %}
+
+                {% endfor %}
+                    {% else %}
+                     <div class="container-fluid">
+                        <p class="text-nowrap font-italic">
+                        <h1> Your Cart is Empty...!!! </h1></p>
+                        <a class="btn btn-outline-primary  text-justify p float-center font-weight-bold"
+                           href="{% url 'Ecom:home' %}">Continue Shopping..!!</a>
+                    </div>
+                {% endif %}
+                {% if object.totalOrderPrice %}
+                    <tr>
+                        <td colspan="4"><b>Grand Total</b></td>
+                        <td class="font-weight-bold">{{ object.totalOrderPrice }} ₹</td>
+                    </tr>
+                    </tbody>
+                    </table>
+                    <a class="btn btn-outline-warning text-danger text-justify p float-lg-right font-weight-bold"
+                       href="{% url 'Ecom:Checkout' %}">Proceed To Checkout</a>
+                    <a class="btn btn-outline-primary  text-justify p float-lg-right font-weight-bold"
+                       href="{% url 'Ecom:home' %}">Continue Shopping..!!</a>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+{% endblock content %}

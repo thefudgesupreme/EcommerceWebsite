@@ -87,8 +87,8 @@
             <ul class="navbar-nav nav-flex-icons">
                 {% if request.user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link waves-effect">
-                            <span class="badge red z-depth-1 mr-1"> {{ request.user|cartItemCount }} </span>
+                        <a href="{% url 'Ecom:Order Summary' %}" class="nav-link waves-effect">
+                            <span class="badge red z-depth-1 mr-1"> {{ request.user|cartItemCount    }} </span>
                             <i class="fas fa-shopping-cart"></i>
                             <span class="clearfix d-none d-sm-inline-block"> Cart </span>
                         </a>

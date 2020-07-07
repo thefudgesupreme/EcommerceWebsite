@@ -153,6 +153,10 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
+# Allowed Hosts
+ALLOWED_HOSTS = ["localhost", "192.168.43.107",'127.0.0.1']
+
+
 SITE_ID=1
 LOGIN_REDIRECT_URL='/'
 # Crispy Forms
