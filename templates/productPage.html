@@ -24,8 +24,9 @@
                     <div class="p-4">
 
                         <div class="mb-3">
-                            <a href="">
-                                <span class="badge purple mr-1">{{ object.get_category_display }}</span>
+                            <span class="badge blue-gradient mr-1">{{ object.get_category_display }}</span>
+                            <a href="{% url 'Ecom:Product Details' object.slug %}">
+                                <span  class="mr-1  font-italic">{{ object.title}}</span>
                             </a>
                             {#              <a href="">#}
                             {#                <span class="badge blue mr-1">New</span>#}

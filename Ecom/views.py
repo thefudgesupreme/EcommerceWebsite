@@ -23,6 +23,7 @@ def products(request):
 
 class HomeView(ListView):
     model = Item
+    paginate_by = 5
     template_name = "homePage.html"
 
 class CheckoutView(TemplateView):
