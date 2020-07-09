@@ -7,24 +7,25 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from .models import Item, OrderItem, Order
 from django.views.generic import ListView, DetailView, TemplateView, View
+from .forms import checkoutForm
 
 
-def home(request):
-    context = {
-        'items': Item.objects.all()
-    }
-    return render(request, "homePage.html", context)
-
-
-def checkout(request):
-    return render(request, 'checkoutPage.html')
-
-
-def products(request):
-    context = {
-        'items': Item.objects.all()
-    }
-    return render(request, 'productPage.html', context)
+# def home(request):
+#     context = {
+#         'items': Item.objects.all()
+#     }
+#     return render(request, "homePage.html", context)
+#
+#
+# def checkout(request):
+#     return render(request, 'checkoutPage.html')
+#
+#
+# def products(request):
+#     context = {
+#         'items': Item.objects.all()
+#     }
+#     return render(request, 'productPage.html', context)
 
 
 class HomeView(ListView):
@@ -49,14 +50,29 @@ class OrderSummaryView(LoginRequiredMixin, View):
     # template_name = 'orderSummary.html'
 
 
-class CheckoutView(TemplateView):
-    model = Item
-    template_name = "checkoutPage"
+class CheckoutView(View):
+    def get(self, *args, **kwargs):
+        form = checkoutForm()
+        context = {
+            'form': form
+        }
+        return render(self.request, 'checkoutPage.html', context)
 
+    def post(self, *args, **kwargs):
+        form = checkoutForm(self.request.POST or None)
+        print(self.request.POST)
+        if form.is_valid():
+            print(form.cleaned_data)
+            print('This form is valid..!!!')
+            messages.warning(self.request,"Checkout Done")
+            return redirect('Ecom:Checkout')
+        messages.warning(self.request,"Checkout Failed")
+        return redirect('Ecom:Checkout')
 
 class ProductView(DetailView):
     model = Item
     template_name = "productPage.html"
+
 
 @login_required
 def addToCart(request, slug):
@@ -86,6 +102,7 @@ def addToCart(request, slug):
         messages.info(request, "Item added to your cart...!!!")
         return redirect('Ecom:Order Summary')
 
+
 @login_required
 def removeFromCart(request, slug):
     item = get_object_or_404(Item, slug=slug)
@@ -100,18 +117,17 @@ def removeFromCart(request, slug):
                 ordered=False
             )[0]
             order.items.remove(order_item)
-            order_item.save()
             messages.info(request, "Item removed from your cart..!!!")
             return redirect('Ecom:Order Summary')
         else:
             # Add message saying order doesn't have required item
             messages.info(request, "Item is not in your cart..!!!")
-            return redirect('Ecom:Product Details', slug=slug)
+            return redirect('Ecom:Order Summary')
     else:
         # Add message saying user doesn't have an order
         messages.info(request, "Your cart is empty..!!!")
-        return redirect('Ecom:Product Details', slug=slug)
-    return redirect('Ecom:Product Details', slug=slug)
+        return redirect('Ecom:Order Summary')
+
 
 @login_required
 def removeSingleItemFromCart(request, slug):
@@ -126,8 +142,11 @@ def removeSingleItemFromCart(request, slug):
                 user=request.user,
                 ordered=False
             )[0]
-            order_item.quantity-=1
-            order_item.save()
+            if order_item.quantity > 1:
+                order_item.quantity -= 1
+                order_item.save()
+            else:
+                order.items.remove(order_item)
             messages.info(request, "Item quantity is  updated in your cart..!!!")
             return redirect('Ecom:Order Summary')
         else:
@@ -137,5 +156,4 @@ def removeSingleItemFromCart(request, slug):
     else:
         # Add message saying user doesn't have an order
         messages.info(request, "Your cart is empty..!!!")
-        return redirect('Ecom:Product Details', slug=slug)
-
+        return redirect('Ecom:Order Summary')
